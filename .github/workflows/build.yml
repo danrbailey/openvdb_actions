@@ -12,20 +12,11 @@ on:
       - 'cmake/**'
       - 'openvdb/**'
       - 'openvdb_houdini/**'
-  pull_request:
-    branches-ignore:
-      - master
-    paths:
-      - '.github/**'
-      - 'CMakeLists.txt'
-      - 'ci/**'
-      - 'cmake/**'
-      - 'openvdb/**'
-      - 'openvdb_houdini/**'
 
 jobs:
   testabi7:
     runs-on: ubuntu-16.04
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     container:
       image: aswf/ci-openvdb:2020
     steps:
@@ -34,3 +25,15 @@ jobs:
       run: ./ci/build.sh clang++ Release 7 ON None
     - name: test
       run: cd build && ctest -V
+
+  testhou180:
+    runs-on: ubuntu-16.04
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    container:
+      image: aswf/ci-base:2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: houdini
+      run: ./ci/install_houdini.sh 18.0 ${{ secrets.HOUPASS }}
+    - name: build
+      run: ./ci/build_houdini.sh clang++ Release ON
