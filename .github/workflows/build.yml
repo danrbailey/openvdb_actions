@@ -6,6 +6,7 @@ on:
     branches:
       - '*'
     paths:
+      - '.github/*'
       - 'CMakeLists.txt'
       - 'ci/*'
       - 'cmake/*'
@@ -15,6 +16,7 @@ on:
     branches-ignore:
       - master
     paths:
+      - '.github/*'
       - 'CMakeLists.txt'
       - 'ci/*'
       - 'cmake/*'

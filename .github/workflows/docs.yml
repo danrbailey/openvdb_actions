@@ -6,7 +6,9 @@ on:
     branches:
       - master
     paths:
+      - '.github/*'
       - 'CMakeLists.txt'
+      - 'ci/*'
       - 'doc/*'
       - 'openvdb/*'
       - 'openvdb_houdini/*'
