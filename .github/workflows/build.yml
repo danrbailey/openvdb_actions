@@ -16,7 +16,6 @@ on:
 jobs:
   testabi7:
     runs-on: ubuntu-16.04
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     container:
       image: aswf/ci-openvdb:2020
     steps:
@@ -28,7 +27,6 @@ jobs:
 
   testhou180:
     runs-on: ubuntu-16.04
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     container:
       image: aswf/ci-base:2019
     steps:
