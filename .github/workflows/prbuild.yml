@@ -5,6 +5,12 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'CMakeLists.txt'
+      - 'ci/*'
+      - 'cmake/*'
+      - 'openvdb/*'
+      - 'openvdb_houdini/*'
 
 jobs:
   testabi7:
@@ -145,12 +151,3 @@ jobs:
       run: ./ci/build.sh clang++ Debug 7 ON SSE42
     - name: test
       run: cd build && ctest -V
-
-  doxygen:
-    runs-on: ubuntu-16.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: install
-      run: ./ci/install_doxygen.sh
-    - name: build
-      run: ./ci/build_doxygen.sh
