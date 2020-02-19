@@ -5,13 +5,6 @@ on:
   push:
     branches:
       - '*'
-    paths:
-      - '.github/*'
-      - 'CMakeLists.txt'
-      - 'ci/*'
-      - 'cmake/*'
-      - 'openvdb/*'
-      - 'openvdb_houdini/*'
   pull_request:
     branches-ignore:
       - master
