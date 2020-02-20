@@ -143,10 +143,10 @@ latest_release = service.download.get_daily_build_download(
 # Download the file as hou.tar.gz
 local_filename = 'hou.tar.gz'
 response = requests.get(latest_release['download_url'], stream=True)
-if r.status_code == 200:
+if response.status_code == 200:
     with open(local_filename, 'wb') as f:
-        r.raw.decode_content = True
-        shutil.copyfileobj(r.raw, f)
+        response.raw.decode_content = True
+        shutil.copyfileobj(response.raw, f)
 else:
     raise Exception('Error downloading file!')
 
