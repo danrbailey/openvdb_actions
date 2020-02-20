@@ -32,14 +32,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: houdini
-
-  - run: |
-      if [ "$HOUPASS" != "" ]; then
-        echo SUCCESS
-      else
-        echo FAIL
-      fi
-      ./ci/install_houdini.sh 18.0 $HOUPASS
+      run: |
+        if [ "$HOUPASS" != "" ]; then
+          echo SUCCESS
+        else
+          echo FAIL
+        fi
+        ./ci/install_houdini.sh 18.0 $HOUPASS
     env:
       HOUPASS: ${{ secrets.HOUPASS }}
     - name: build
