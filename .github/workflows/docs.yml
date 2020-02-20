@@ -21,4 +21,4 @@ jobs:
     - name: install
       run: ./ci/install_doxygen.sh
     - name: build
-      run: ./ci/build_doxygen.sh
+      run: ./ci/build_docs.sh
