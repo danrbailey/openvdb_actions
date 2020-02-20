@@ -45,7 +45,7 @@ jobs:
     - name: houdini
       run: |
           if [ "$HOUDINI_CLIENT_ID" != "" ] && [ "$HOUDINI_CLIENT_KEY" != "" ]; then
-            ./ci/install_houdini.sh 18.0 "$HOUDINI_CLIENT_ID" "$HOUDINI_CLIENT_KEY"
+            ./ci/install_houdini.sh 18.0 ON "$HOUDINI_CLIENT_ID" "$HOUDINI_CLIENT_KEY"
           fi
       env:
         HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}

@@ -8,6 +8,16 @@ import base64
 import requests
 import hashlib
 
+# this argument is for the major.minor version of Houdini to download (such as 15.0, 15.5, 16.0)
+version = sys.argv[1]
+only_production = True if sys.argv[2] == 'ON' else False
+client_id = sys.argv[3]
+client_secret_key = sys.argv[4]
+
+if not re.match('[0-9][0-9]\.[0-9]$', version):
+    raise IOError('Invalid Houdini Version "%s", expecting in the form "major.minor" such as "16.0"' % version)
+
+
 # Code that provides convenient Python wrappers to call into the API:
 
 def service(
@@ -116,15 +126,6 @@ class APIError(Exception):
         self.http_code = http_code
 
 
-# this argument is for the major.minor version of Houdini to download (such as 15.0, 15.5, 16.0)
-version = sys.argv[1]
-client_id = sys.argv[2]
-client_secret_key = sys.argv[3]
-
-if not re.match('[0-9][0-9]\.[0-9]$', version):
-    raise IOError('Invalid Houdini Version "%s", expecting in the form "major.minor" such as "16.0"' % version)
-
-
 service = service(
         access_token_url="https://www.sidefx.com/oauth2/application_token",
         client_id=client_id,
@@ -133,27 +134,22 @@ service = service(
     )
 
 releases_list = service.download.get_daily_builds_list(
-        product='houdini', version=version, platform='linux', only_production=True)
+        product='houdini', version=version, platform='linux', only_production=only_production)
 
 latest_release = service.download.get_daily_build_download(
         product='houdini', version=version, platform='linux', build=releases_list[0]['build'])
 
-# Download the file
+# Download the file as hou.tar.gz
 local_filename = 'hou.tar.gz'
+mb = 1024*1024
+chunk = 50
+size = 0
 response = requests.get(latest_release['download_url'], stream=True)
-total_length = response.headers.get('content-length')
-if total_length is None: # no content length header
-    raise Exception('Empty File!')
-else:
-    dl = 0
-    total_length = int(total_length)
-    with open(local_filename, "wb") as f:
-        for data in response.iter_content(chunk_size=4096):
-            dl += len(data)
-            f.write(data)
-            done = int(50 * dl / total_length)
-            sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
-            sys.stdout.flush()
+with open(local_filename, "wb") as f:
+    for bytes in iter((lambda: response.read(chunk*mb)), ''):
+        size += 50
+        print 'Read: %sMB' % size
+        f.write(bytes)
 
 # Verify the file checksum is matching
 file_hash = hashlib.md5()
@@ -163,68 +159,3 @@ with open(local_filename, 'rb') as f:
 if file_hash.hexdigest() != latest_release['hash']:
     raise Exception('Checksum does not match!')
 
-# if r.status_code == 200:
-#     with open(local_filename, 'wb') as f:
-#         r.raw.decode_content = True
-#         shutil.copyfileobj(r.raw, f)
-# else:
-#     raise Exception('Error downloading file!')
-
-# # Verify the file checksum is matching
-# file_hash = hashlib.md5()
-# with open(local_filename, 'rb') as f:
-#     for chunk in iter(lambda: f.read(4096), b''):
-#         file_hash.update(chunk)
-# if file_hash.hexdigest() != latest_release['hash']:
-#     raise Exception('Checksum does not match!')
-
-# print str(local_filename)
-
-# for release in releases_list:
-#     print str(release)
-
-# import requests
-# import base64
-# import json
-
-# client_id="yuzke9aROovCDzMHtbQihTkTPi0kUA3h23O2Boxx"
-# client_secret_key="LTbE5VwwNGS0Ed8IVlqDIF5vlHjqidLwb4df0FllSWHYXpj5EVK9ZJ9KjIs6PyVCQJavfPqbQPofB9IvfydJk7q9GQMU32uEYWgL51KsxdLOCRTcJf9Xdmt8XeGtwhcs"
-
-
-# # get an access token
-
-# access_token_url="https://www.sidefx.com/oauth2/application_token"
-
-# response = requests.post(
-#     access_token_url,
-#     headers={
-#         "Authorization": u"Basic {0}".format(
-#             base64.b64encode(
-#                 "{0}:{1}".format(
-#                     client_id, client_secret_key
-#                 ).encode()
-#             ).decode('utf-8')
-#         ),
-#     }
-# )
-
-# if response.status_code != 200:
-#     raise Exception(response.status_code)
-
-# access_token = response.json()['access_token']
-
-# endpoint_url="https://www.sidefx.com/api/"
-
-# function_name = "download.get_daily_build_download"
-
-# response = requests.post(
-#         endpoint_url,
-#         headers={
-#             "Authorization": "Bearer " + access_token,
-#         },
-#         data=dict(
-#             json=json.dumps([function_name]),
-#         ))
-
-# print str(response)
-# print str(data)
