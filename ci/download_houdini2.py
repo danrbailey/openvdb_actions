@@ -3,6 +3,7 @@
 import time
 import sys
 import re
+import shutil
 import json
 import base64
 import requests
@@ -141,15 +142,13 @@ latest_release = service.download.get_daily_build_download(
 
 # Download the file as hou.tar.gz
 local_filename = 'hou.tar.gz'
-mb = 1024*1024
-chunk = 50
-size = 0
 response = requests.get(latest_release['download_url'], stream=True)
-with open(local_filename, "wb") as f:
-    for bytes in iter((lambda: response.read(chunk*mb)), ''):
-        size += 50
-        print 'Read: %sMB' % size
-        f.write(bytes)
+if r.status_code == 200:
+    with open(local_filename, 'wb') as f:
+        r.raw.decode_content = True
+        shutil.copyfileobj(r.raw, f)
+else:
+    raise Exception('Error downloading file!')
 
 # Verify the file checksum is matching
 file_hash = hashlib.md5()

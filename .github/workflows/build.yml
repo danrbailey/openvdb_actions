@@ -25,6 +25,23 @@ jobs:
     - name: test
       run: cd build && ctest -V
 
+  houdinisecrets:
+    runs-on: ubuntu-16.04
+    steps:
+    - name: secret
+      run: |
+          if [ "$HOUDINI_CLIENT_ID" == "" ]; then
+            echo "HOUDINI_CLIENT_ID GitHub Action Secret needs to be set to test Houdini builds"
+            exit 1
+          fi
+          if [ "$HOUDINI_CLIENT_KEY" == "" ]; then
+            echo "HOUDINI_CLIENT_KEY GitHub Action Secret needs to be set to test Houdini builds"
+            exit 1
+          fi
+      env:
+        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
+
   testhou180:
     runs-on: ubuntu-16.04
     container:
