@@ -1,5 +1,5 @@
 
-name: FullBuild
+name: CompleteBuild
 
 on:
   pull_request:
