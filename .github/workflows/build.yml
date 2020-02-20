@@ -31,15 +31,24 @@ jobs:
       image: aswf/ci-base:2019
     steps:
     - uses: actions/checkout@v2
-    - name: houdini
+    - name: secret
       run: |
           if [ "$HOUPASS" == "" ]; then
             echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds, skipping $HOUPASS"
           fi
+      env:
+        HOUPASS: ${{ secrets.HOUPASS }}
+    - name: houdini
+      run: |
           if [ "$HOUPASS" != "" ]; then
             ./ci/install_houdini.sh 18.0 "$HOUPASS"
           fi
       env:
         HOUPASS: ${{ secrets.HOUPASS }}
     - name: build
-      run: ./ci/build_houdini.sh clang++ Release ON
+      run: |
+        if [ "$HOUPASS" != "" ]; then
+          ./ci/build_houdini.sh clang++ Release ON
+        fi
+      env:
+        HOUPASS: ${{ secrets.HOUPASS }}
