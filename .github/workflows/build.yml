@@ -33,10 +33,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: houdini
       run: |
+        if [ "$HOUPASS" == "" ]; then
+          echo EMPTY
+        fi
         if [ "$HOUPASS" != "" ]; then
-          echo SUCCESS
-        else
-          echo FAIL
+          echo NOTEMPTY
         fi
         ./ci/install_houdini.sh 18.0 $HOUPASS
     env:
