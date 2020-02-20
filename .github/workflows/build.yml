@@ -14,7 +14,7 @@ on:
       - 'openvdb_houdini/**'
 
 jobs:
-  testabi7:
+  abi7:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
@@ -25,52 +25,13 @@ jobs:
     - name: test
       run: cd build && ctest -V
 
-  houdinisecrets:
-    runs-on: ubuntu-16.04
-    steps:
-    - name: secret
-      run: |
-          if [ "$HOUDINI_CLIENT_ID" == "" ]; then
-            echo "HOUDINI_CLIENT_ID GitHub Action Secret needs to be set to test Houdini builds"
-            exit 1
-          fi
-          if [ "$HOUDINI_CLIENT_KEY" == "" ]; then
-            echo "HOUDINI_CLIENT_KEY GitHub Action Secret needs to be set to test Houdini builds"
-            exit 1
-          fi
-      env:
-        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
-        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
-
-  testhou180:
+  houdini18.0:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-base:2019
     steps:
     - uses: actions/checkout@v2
     - name: houdini
-      run: ./ci/install_houdini.sh 18.0 ON ${{ secrets.HOUDINI_CLIENT_ID }} ${{ secrets.HOUDINI_CLIENT_KEY }}
+      run: ./ci/install_houdini.sh 18.0 ON OFF ${{ secrets.HOUDINI_CLIENT_ID }} ${{ secrets.HOUDINI_CLIENT_KEY }}
     - name: build
-      run: |
-        if [ -d "hou" ]; then
-          ./ci/build_houdini.sh clang++ Release ON
-        fi
-
-  # testhou175:
-  #   runs-on: ubuntu-16.04
-  #   container:
-  #     image: aswf/ci-base:2018
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: secret
-  #     run: |
-  #         if [ "$HOUPASS" == "" ]; then
-  #           echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds"
-  #           exit 1
-  #         fi
-  #     env:
-  #       HOUPASS: ${{ secrets.HOUPASS }}
-  #   - name: houdini
-  #     run: ./ci/install_houdini.sh 17.5 ${{ secrets.HOUPASS }}
-  #   - name: build
-  #     run: ./ci/build_houdini.sh clang++ Release ON
+      run: ./ci/build_houdini.sh clang++ Release ON
