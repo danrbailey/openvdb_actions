@@ -1,5 +1,5 @@
 
-name: PRBuild
+name: FullBuild
 
 on:
   pull_request:
