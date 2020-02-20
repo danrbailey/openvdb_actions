@@ -34,12 +34,11 @@ jobs:
     - name: houdini
       run: |
           if [ "$HOUPASS" == "" ]; then
-            echo EMPTY
+            echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds, skipping $HOUPASS"
           fi
           if [ "$HOUPASS" != "" ]; then
-            echo NOTEMPTY
+            ./ci/install_houdini.sh 18.0 "$HOUPASS"
           fi
-          ./ci/install_houdini.sh 18.0 "$HOUPASS"
       env:
         HOUPASS: ${{ secrets.HOUPASS }}
     - name: build
