@@ -33,42 +33,47 @@ jobs:
     - uses: actions/checkout@v2
     - name: secret
       run: |
-          if [ "$HOUPASS" == "" ]; then
-            echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds, skipping $HOUPASS"
-            exit 0
+          if [ "$HOUDINI_CLIENT_ID" == "" ]; then
+            echo "HOUDINI_CLIENT_ID GitHub Action Secret needs to be set to test Houdini builds, skipping"
+          fi
+          if [ "$HOUDINI_CLIENT_KEY" == "" ]; then
+            echo "HOUDINI_CLIENT_KEY GitHub Action Secret needs to be set to test Houdini builds, skipping"
           fi
       env:
-        HOUPASS: ${{ secrets.HOUPASS }}
+        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
     - name: houdini
       run: |
-          if [ "$HOUPASS" != "" ]; then
-            ./ci/install_houdini.sh 18.0 "$HOUPASS"
+          if [ "$HOUDINI_CLIENT_ID" != "" ] && [ "$HOUDINI_CLIENT_KEY" != "" ]; then
+            ./ci/install_houdini.sh 18.0 "$HOUDINI_CLIENT_ID" "$HOUDINI_CLIENT_KEY"
           fi
       env:
-        HOUPASS: ${{ secrets.HOUPASS }}
+        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
     - name: build
       run: |
-        if [ "$HOUPASS" != "" ]; then
+        if [ "$HOUDINI_CLIENT_ID" != "" ] && [ "$HOUDINI_CLIENT_KEY" != "" ]; then
           ./ci/build_houdini.sh clang++ Release ON
         fi
       env:
-        HOUPASS: ${{ secrets.HOUPASS }}
+        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
 
-  testhou175:
-    runs-on: ubuntu-16.04
-    container:
-      image: aswf/ci-base:2018
-    steps:
-    - uses: actions/checkout@v2
-    - name: secret
-      run: |
-          if [ "$HOUPASS" == "" ]; then
-            echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds"
-            exit 1
-          fi
-      env:
-        HOUPASS: ${{ secrets.HOUPASS }}
-    - name: houdini
-      run: ./ci/install_houdini.sh 17.5 ${{ secrets.HOUPASS }}
-    - name: build
-      run: ./ci/build_houdini.sh clang++ Release ON
+  # testhou175:
+  #   runs-on: ubuntu-16.04
+  #   container:
+  #     image: aswf/ci-base:2018
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: secret
+  #     run: |
+  #         if [ "$HOUPASS" == "" ]; then
+  #           echo "HOUPASS GitHub Action Secret needs to be set to test Houdini builds"
+  #           exit 1
+  #         fi
+  #     env:
+  #       HOUPASS: ${{ secrets.HOUPASS }}
+  #   - name: houdini
+  #     run: ./ci/install_houdini.sh 17.5 ${{ secrets.HOUPASS }}
+  #   - name: build
+  #     run: ./ci/build_houdini.sh clang++ Release ON
