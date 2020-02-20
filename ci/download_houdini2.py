@@ -2,6 +2,7 @@
 
 import time
 import sys
+import re
 import json
 import base64
 import requests
