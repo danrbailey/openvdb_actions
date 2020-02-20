@@ -31,33 +31,13 @@ jobs:
       image: aswf/ci-base:2019
     steps:
     - uses: actions/checkout@v2
-    - name: secret
-      run: |
-          if [ "$HOUDINI_CLIENT_ID" == "" ]; then
-            echo "HOUDINI_CLIENT_ID GitHub Action Secret needs to be set to test Houdini builds, skipping"
-          fi
-          if [ "$HOUDINI_CLIENT_KEY" == "" ]; then
-            echo "HOUDINI_CLIENT_KEY GitHub Action Secret needs to be set to test Houdini builds, skipping"
-          fi
-      env:
-        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
-        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
     - name: houdini
-      run: |
-          if [ "$HOUDINI_CLIENT_ID" != "" ] && [ "$HOUDINI_CLIENT_KEY" != "" ]; then
-            ./ci/install_houdini.sh 18.0 ON "$HOUDINI_CLIENT_ID" "$HOUDINI_CLIENT_KEY"
-          fi
-      env:
-        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
-        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
+      run: ./ci/install_houdini.sh 18.0 ON ${{ secrets.HOUDINI_CLIENT_ID }} ${{ secrets.HOUDINI_CLIENT_KEY }}
     - name: build
       run: |
-        if [ "$HOUDINI_CLIENT_ID" != "" ] && [ "$HOUDINI_CLIENT_KEY" != "" ]; then
+        if [ -d "hou" ]; then
           ./ci/build_houdini.sh clang++ Release ON
         fi
-      env:
-        HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
-        HOUDINI_CLIENT_KEY: ${{ secrets.HOUDINI_CLIENT_KEY }}
 
   # testhou175:
   #   runs-on: ubuntu-16.04

@@ -7,15 +7,14 @@ GOLD="$2"
 HOUDINI_CLIENT_ID="$3"
 HOUDINI_SECRET_KEY="$4"
 
-# pip install --user future
-# pip install --user lxml
-# pip install --user mechanize
+if [ "$HOUDINI_CLIENT_ID" == "" ]; then
+    echo "HOUDINI_CLIENT_ID GitHub Action Secret needs to be set to install Houdini builds"
+fi
+if [ "$HOUDINI_SECRET_KEY" == "" ]; then
+    echo "HOUDINI_SECRET_KEY GitHub Action Secret needs to be set to install Houdini builds"
+fi
 
 pip install --user requests
-
-# export PYTHONPATH=${PYTHONPATH}:/usr/lib/python2.7/dist-packages
-# download and unpack latest houdini headers and libraries from daily-builds
-# python ci/download_houdini.py $HOUDINI_MAJOR $HOUDINI_CLIENT_ID $HOUDINI_SECRET_KEY
 
 python ci/download_houdini2.py $HOUDINI_MAJOR $GOLD $HOUDINI_CLIENT_ID $HOUDINI_SECRET_KEY
 
