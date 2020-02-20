@@ -32,6 +32,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: houdini
-      run: ./ci/install_houdini.sh 18.0 ${{ secrets.HOUPASS }}
+
+  - run: |
+      if [ "$HOUPASS" != "" ]; then
+        echo SUCCESS
+      else
+        echo FAIL
+      fi
+      ./ci/install_houdini.sh 18.0 $HOUPASS
+    env:
+      HOUPASS: ${{ secrets.HOUPASS }}
     - name: build
       run: ./ci/build_houdini.sh clang++ Release ON
