@@ -10,6 +10,8 @@ HOUDINI_SECRET_KEY="$3"
 # pip install --user lxml
 # pip install --user mechanize
 
+pip install --user requests
+
 # export PYTHONPATH=${PYTHONPATH}:/usr/lib/python2.7/dist-packages
 # download and unpack latest houdini headers and libraries from daily-builds
 # python ci/download_houdini.py $HOUDINI_MAJOR $HOUDINI_CLIENT_ID $HOUDINI_SECRET_KEY
